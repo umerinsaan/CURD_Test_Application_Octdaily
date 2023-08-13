@@ -1,0 +1,124 @@
+<div class="top-row-container">
+  <button class="add-btn" (click)="openModal()">Add Question</button>
+  <div class="search">
+    <input type="text" class="search-question-input-field" (input)="searchQuestionInputEventHandler()" [(ngModel)]="searchQuery" placeholder="Search">
+    <i id="search-icon" class="fa-solid fa-magnifying-glass"></i>
+  </div>
+</div>
+<table>
+  <thead class="table-head">
+    <tr>
+      <th class="th-action">Action</th>
+      <th>
+        <div (click)="reverseData()" class="h-title-container">
+          <div>Title</div>
+          <div class="arrows">
+            <div [style.opacity]="(titleArrowController.counter === 1)? '0' : '1' " class="up-arrow"></div>
+            <div [style.opacity]="(titleArrowController.counter === 2)? '0' : '1' " class="down-arrow"></div>
+          </div>
+        </div>
+      </th>
+      <th>
+        <div (click)="sortOnAcceptance()" class="h-acceptance-container">
+          <div>Acceptance</div>
+          <div class="arrows">
+            <div [style.opacity]="(acceptanceArrowController.counter === 1)? '0' : '1' " class="up-arrow"></div>
+            <div [style.opacity]="(acceptanceArrowController.counter === 2)? '0' : '1' " class="down-arrow"></div>
+          </div>
+        </div>
+      </th>
+      <th>
+        <div (click)="sortOnDifficulty()" class="h-difficulty-container">
+          <div>Difficulty</div>
+          <div class="arrows">
+            <div [style.opacity]="(difficultyArrowController.counter === 1)? '0' : '1' " class="up-arrow"></div>
+            <div [style.opacity]="(difficultyArrowController.counter === 2)? '0' : '1' " class="down-arrow"></div>
+          </div>
+        </div>
+      </th>
+      <th class="th-action">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="q-row" *ngFor="let question of questions; index as i">
+      <td>
+        <div class="action-btn-container">
+          <button *ngIf="!question.isEditable" (click)="toggleEditable(question)" class="action-btn">Edit</button>
+          <button *ngIf="question.isEditable" (click)="saveHandeler(question,$event,i)" class="action-btn">Save</button>
+        </div>
+      </td>
+      <td class="title">
+        <div class="q-title-container">
+          <div>{{question.renderID}}.</div>
+          <div class="exact-title"><input type="text" name="title" class="title-input-field" [value]="question.title"
+              [readonly]="!question.isEditable" (input)="showData(question,$event)">
+          </div>
+        </div>
+      </td>
+      <td class="acceptance">
+        <input type="text" name="acceptance" class="acceptance-input-field" [value]="question.acceptance + '%'"
+          [readonly]="!question.isEditable" (input)="showData(question,$event)">
+
+      </td>
+      <td class="difficulty" [ngClass]="{
+        'easy' : question.difficulty === 'Easy',
+        'medium' : question.difficulty === 'Medium',
+        'hard' : question.difficulty === 'Hard'
+      }">
+        <div class="difficulty-container">
+          <div class="exact-difficulty">{{question.difficulty}}</div>
+          <div *ngIf="question.isEditable" class="difficulty-selector-container">
+            <div (click)="changeDifficulty(question,i,-1)" class="difficulty-right-arrow"></div>
+            <div (click)="changeDifficulty(question,i,1)" class="difficulty-left-arrow"></div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="action-btn-container">
+          <button (click)="deleteQuestion(question)" class="action-btn">Delete</button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<dialog id="add-question-modal">
+  <div class="add-question-input-fields-container">
+    <div class="add-question-input-field">
+      <input type="text" id="add-question-title" class="add-question-input-tag" (blur)="addQuestionInputEmptyHandler()">
+      <label class="add-question-label" for="add-question-title"
+        [ngClass]="{'add-question-label-animation': !isTitleEmpty}">Title</label>
+    </div>
+    <div class="add-question-input-field">
+      <input type="text" id="add-question-acceptance" class="add-question-input-tag"
+        (blur)="addQuestionInputEmptyHandler()">
+      <label class="add-question-label" for="add-question-acceptance"
+        [ngClass]="{'add-question-label-animation': !isAcceptanceEmpty}">Acceptance</label>
+    </div>
+    <div class="add-question-input-field">
+      <input type="text" id="add-question-difficulty" class="add-question-input-tag"
+        (blur)="addQuestionInputEmptyHandler()">
+      <label class="add-question-label" for="add-question-difficulty"
+        [ngClass]="{'add-question-label-animation': !isDifficultyEmpty}">Difficulty</label>
+    </div>
+    <div class="add-question-btn-container">
+      <button class="add-question-close-btn add-question-btn" (click)="closeModal()">Close</button>
+      <button class="add-question-submit-btn add-question-btn" (click)="submitBTN_AddQuestion()">Add</button>
+    </div>
+  </div>
+</dialog>
+
+<footer>
+  <div class="page-switcher-container">
+    <button class="page-switcher-btn page-switcher-btn-left" (click)="leftPageSwitchHandler()">
+      <i class="fa-solid fa-angles-left"></i>
+    </button>
+    <div class="page-switcher-input-container">
+      <input type="text" class="page-switcher-input-tag" [value]="pageNumber" (input)="pageSwitcherInputEventHandler()">
+    </div>
+    <button class="page-switcher-btn page-switcher-btn-right" (click)="rightPageSwitchHandler()">
+      <i class="fa-solid fa-angles-right"></i>
+    </button>
+  </div>
+  <div id="last-line">Max. {{maxPages}} pages</div>
+</footer>
